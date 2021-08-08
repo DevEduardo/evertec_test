@@ -9,14 +9,14 @@
                             <!-- Logo -->
                             <div class="flex-shrink-0 flex items-center">
                                 <Link :href="route('dashboard')">
-                                    <BreezeApplicationLogo class="block h-9 w-auto" />
+                                    <img :src="'img/logo.png'" class="w-40">
                                 </Link>
                             </div>
 
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                                 <BreezeNavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                                    Dashboard
+                                    Panel
                                 </BreezeNavLink>
                             </div>
                         </div>
