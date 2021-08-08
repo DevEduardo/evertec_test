@@ -90,19 +90,19 @@
                                     <hr />
                                     <div class="flex space-4 font-extralight p-2">
                                         <div class="flex-1 text-left">
-                                            <input id="name" v-model="form.name" type="text" placeholder="Nombre" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                            <input id="name" v-model="form.customer_name" type="text" placeholder="Nombre" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                                         </div>
                                     </div>
                                     <hr />
                                     <div class="flex space-4 font-extralight p-2">
                                         <div class="flex-1 text-left">
-                                            <input id="phone" v-model="form.phone" type="text" placeholder="Número telefonico" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                            <input id="phone" v-model="form.customer_mobile" type="text" placeholder="Número telefonico" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                                         </div>
                                     </div>
                                     <hr />
                                     <div class="flex space-4 font-extralight p-2">
                                         <div class="flex-1 text-left">
-                                            <input id="email" v-model="form.email" type="email" placeholder="Correo electrónico" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                            <input id="email" v-model="form.customer_email" type="email" placeholder="Correo electrónico" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                                         </div>
                                     </div>
                                 </div>
@@ -151,15 +151,16 @@ export default {
             total: null,
             form: this.$inertia.form({
                 quantity: '',
-                name: '',
-                phone: '',
-                email: ''
+                customer_name: '',
+                customer_mobile: '',
+                customer_email: ''
             })
         }
     },
     created() {
         this.quantity = this.quantityProps
         this.total = this.quantity * 2000
+        this.form.quantity = this.quantity
     },
     methods: {
 
@@ -170,9 +171,7 @@ export default {
 
         submit() {
             this.form.post(this.route('sale.payment'), {
-                onFinish: (response) => {
-                   window.location = this.url
-                },
+                onFinish: () => window.location = this.url,
             })
         }
     }

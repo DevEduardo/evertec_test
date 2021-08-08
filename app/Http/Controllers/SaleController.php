@@ -6,9 +6,19 @@ use Illuminate\Support\Facades\Auth;
 use Dnetix\Redirection\PlacetoPay;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\Customer;
+use App\Models\Payment;
+use App\Models\Order;
 
 class SaleController extends Controller
 {
+    private $modelCustomer;
+
+    public function __construct(Customer $modelCustomer)
+    {
+        $this->modelCustomer = $modelCustomer;
+    }
+
     public function detail(Request $request)
     {
         return Inertia::render('Detail', [
@@ -25,20 +35,21 @@ class SaleController extends Controller
             'tranKey' => '024h1IlD',
             'url' => 'https://dev.placetopay.com/redirection',
             'rest' => [
-                'timeout' => 45, // (optional) 15 by default
-                'connect_timeout' => 30, // (optional) 5 by default
+                'timeout' => 45,
+                'connect_timeout' => 30,
             ]
         ]);
+        
+        $codeSale = 'YS-'. time();
 
-        $reference = 'eduardo';
-        $request = [
+        $dataToPLaceTopay = [
             'buyer' => [
-                "name" => $request->name,
-                "email" => $request->email,
-                "mobile" => $request->phone
+                "name" => $request->customer_name,
+                "email" => $request->customer_email,
+                "mobile" => $request->customer_mobile
             ],
             'payment' => [
-                'reference' => $reference,
+                'reference' => $codeSale,
                 'description' => 'Testing payment',
                 'amount' => [
                     'currency' => 'USD',
@@ -46,23 +57,27 @@ class SaleController extends Controller
                 ],
             ],
             'expiration' => date('c', strtotime('+2 days')),
-            'returnUrl' => 'http://127.0.0.1/response/' . $reference,
+            'returnUrl' => 'http://127.0.0.1/response/' . $codeSale,
             'ipAddress' => '127.0.0.1',
             'userAgent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36',
         ];
 
-        $response = $placetopay->request($request);
-        if ($response->isSuccessful()) {
-            return Inertia::render('Detail', [
-                'url' => $response->processUrl,
-                'auth' => Auth::user()
-            ]);
-        } else {
-            dd($response);
-        }
+            $response = $placetopay->request($dataToPLaceTopay);
+            
+            if ($response->isSuccessful()) {
+
+                $data = $this->modelCustomer->create($request, $response->requestId, $codeSale);
+                
+                return Inertia::render('Detail', [
+                    'url' => $response->processUrl,
+                    'auth' => Auth::user()
+                ]);
+            } else {
+                dd($response);
+            }
+        
     }
 
-    
     public function response($reference)
     {
         //crear variables de entorno
@@ -79,13 +94,10 @@ class SaleController extends Controller
         $response = $placetopay->query();
 
         if ($response->isSuccessful()) {
-            // In order to use the functions please refer to the Dnetix\Redirection\Message\RedirectInformation class
-
             if ($response->status()->isApproved()) {
                 return response()->json($response);
             }
         } else {
-            // There was some error with the connection so check the message
             print_r($response->status()->message() . "\n");
         }
     }
