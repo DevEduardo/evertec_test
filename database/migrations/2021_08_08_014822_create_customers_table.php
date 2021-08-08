@@ -18,6 +18,10 @@ class CreateCustomersTable extends Migration
             $table->string('customer_name', 80);
             $table->string('customer_email', 120);
             $table->string('customer_mobile', 120);
+            $table->string('payment_id')->nullable();
+            $table->enum('status', ['created', 'payed', 'rejected'])->default('created');
+            $table->double('amount', 8, 2);
+            $table->integer('quantity');
             $table->timestamps();
         });
     }

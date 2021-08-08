@@ -1,5 +1,5 @@
 <template>
-    <Head title="Welcome" />
+    <Head title="Inicio" />
 
     <div>
         <div class="min-h-screen bg-gray-100">
@@ -75,7 +75,7 @@
                         La pantalla del iPhone 12 Pro tiene esquinas redondeadas que siguen el elegante diseño curvo del teléfono, y las esquinas se encuentran dentro de un rectángulo estándar. Si se mide en forma de rectángulo estándar, la pantalla tiene 6.06 pulgadas en diagonal (el área real de visualización es menor).
                         </p>
                             
-                        <p class="font-serif text-5xl italic mt-5">$2.000</p>
+                        <p class="font-serif text-5xl italic mt-5">$2000</p>
                         <div>
                             <form  @submit.prevent="submit" class="mt-8">
                                 <div class="mb-4">
