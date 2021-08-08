@@ -30,5 +30,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::any('sale/detail', [SaleController::class, 'detail'])->name('sale.detail');
+Route::post('sale/payment', [SaleController::class, 'payment'])->name('sale.payment');
+Route::get('/response/{reference}', [SaleController::class, 'response']);
 
 require __DIR__.'/auth.php';

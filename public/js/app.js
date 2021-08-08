@@ -18698,7 +18698,13 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       quantity: null,
-      total: null
+      total: null,
+      form: this.$inertia.form({
+        quantity: '',
+        name: '',
+        phone: '',
+        email: ''
+      })
     };
   },
   created: function created() {
@@ -18709,6 +18715,13 @@ __webpack_require__.r(__webpack_exports__);
     formatPrice: function formatPrice(value) {
       var val = (value / 1).toFixed(2).replace('.', ',');
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    },
+    submit: function submit() {
+      this.form.post(this.route('sale.payment'), {
+        onFinish: function onFinish(response) {
+          return console.log(response);
+        }
+      });
     }
   }
 });
@@ -20204,43 +20217,75 @@ var _hoisted_30 = {
   "class": "w-96 p-5"
 };
 var _hoisted_31 = {
-  action: "{{ route('sale.payment')}}",
-  method: "post",
-  id: "form-payment"
+  "class": "w-90 p-5 border border-gray-200"
 };
 
-var _hoisted_32 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<div class=\"w-90 p-5 border border-gray-200\" data-v-2cbb1eba><p class=\"font-serif font-bold text-2xl p-2\" data-v-2cbb1eba>Datos personales</p><hr data-v-2cbb1eba><div class=\"flex space-4 font-extralight p-2\" data-v-2cbb1eba><div class=\"flex-1 text-left\" data-v-2cbb1eba><input id=\"name\" type=\"text\" placeholder=\"Nombre\" class=\"shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline\" data-v-2cbb1eba></div></div><hr data-v-2cbb1eba><div class=\"flex space-4 font-extralight p-2\" data-v-2cbb1eba><div class=\"flex-1 text-left\" data-v-2cbb1eba><input id=\"phone\" type=\"text\" placeholder=\"Número telefonico\" class=\"shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline\" data-v-2cbb1eba></div></div><hr data-v-2cbb1eba><div class=\"flex space-4 font-extralight p-2\" data-v-2cbb1eba><div class=\"flex-1 text-left\" data-v-2cbb1eba><input id=\"email\" type=\"email\" placeholder=\"Correo electrónico\" class=\"shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline\" data-v-2cbb1eba></div></div></div>", 1);
+var _hoisted_32 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("p", {
+  "class": "font-serif font-bold text-2xl p-2"
+}, "Datos personales", -1
+/* HOISTED */
+);
 
-var _hoisted_33 = {
+var _hoisted_33 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("hr", null, null, -1
+/* HOISTED */
+);
+
+var _hoisted_34 = {
+  "class": "flex space-4 font-extralight p-2"
+};
+var _hoisted_35 = {
+  "class": "flex-1 text-left"
+};
+
+var _hoisted_36 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("hr", null, null, -1
+/* HOISTED */
+);
+
+var _hoisted_37 = {
+  "class": "flex space-4 font-extralight p-2"
+};
+var _hoisted_38 = {
+  "class": "flex-1 text-left"
+};
+
+var _hoisted_39 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("hr", null, null, -1
+/* HOISTED */
+);
+
+var _hoisted_40 = {
+  "class": "flex space-4 font-extralight p-2"
+};
+var _hoisted_41 = {
+  "class": "flex-1 text-left"
+};
+var _hoisted_42 = {
   "class": "w-90 mt-4 p-5 border border-gray-200"
 };
 
-var _hoisted_34 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("p", {
+var _hoisted_43 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("p", {
   "class": "font-serif font-bold text-2xl p-2"
 }, "Resumen de pedido", -1
 /* HOISTED */
 );
 
-var _hoisted_35 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("hr", null, null, -1
+var _hoisted_44 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("hr", null, null, -1
 /* HOISTED */
 );
 
-var _hoisted_36 = {
+var _hoisted_45 = {
   "class": "flex space-4 font-extralight p-2"
 };
-var _hoisted_37 = {
+var _hoisted_46 = {
   "class": "flex-1 text-left"
 };
-var _hoisted_38 = {
+var _hoisted_47 = {
   "class": "flex-1 text-right"
 };
 
-var _hoisted_39 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", {
+var _hoisted_48 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", {
   "class": "mt-4 text-right"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
-  "class": "bg-primary text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline",
-  type: "button",
-  onClick: "sendForm()"
+  "class": "bg-primary text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
 }, " Comprar ")], -1
 /* HOISTED */
 );
@@ -20350,11 +20395,47 @@ var render = /*#__PURE__*/_withId(function (_ctx, _cache, $props, $setup, $data,
   /* NEED_PATCH */
   ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $props.quantityProps]])])]), _hoisted_27, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_28, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("p", _hoisted_29, "$" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.formatPrice($data.total)), 1
   /* TEXT */
-  )])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_30, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("form", _hoisted_31, [_hoisted_32, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_33, [_hoisted_34, _hoisted_35, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_36, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_37, "Subtotal (" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.quantityProps) + ")", 1
+  )])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_30, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("form", {
+    onSubmit: _cache[5] || (_cache[5] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
+      return $options.submit && $options.submit.apply($options, arguments);
+    }, ["prevent"]))
+  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_31, [_hoisted_32, _hoisted_33, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_34, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_35, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("input", {
+    id: "name",
+    "onUpdate:modelValue": _cache[2] || (_cache[2] = function ($event) {
+      return $data.form.name = $event;
+    }),
+    type: "text",
+    placeholder: "Nombre",
+    "class": "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+  }, null, 512
+  /* NEED_PATCH */
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.form.name]])])]), _hoisted_36, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_37, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_38, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("input", {
+    id: "phone",
+    "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
+      return $data.form.phone = $event;
+    }),
+    type: "text",
+    placeholder: "Número telefonico",
+    "class": "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+  }, null, 512
+  /* NEED_PATCH */
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.form.phone]])])]), _hoisted_39, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_40, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_41, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("input", {
+    id: "email",
+    "onUpdate:modelValue": _cache[4] || (_cache[4] = function ($event) {
+      return $data.form.email = $event;
+    }),
+    type: "email",
+    placeholder: "Correo electrónico",
+    "class": "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+  }, null, 512
+  /* NEED_PATCH */
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.form.email]])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_42, [_hoisted_43, _hoisted_44, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_45, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_46, "Subtotal (" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.quantityProps) + ")", 1
   /* TEXT */
-  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_38, "$" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.formatPrice($data.total)), 1
+  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_47, "$" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.formatPrice($data.total)), 1
   /* TEXT */
-  )]), _hoisted_39])])])])])])])])], 64
+  )]), _hoisted_48])], 32
+  /* HYDRATE_EVENTS */
+  )])])])])])])], 64
   /* STABLE_FRAGMENT */
   );
 });

@@ -83,26 +83,26 @@
                         </div>
                         
                         <div class="w-96 p-5">
-                            <form action="{{ route('sale.payment')}}" method="post" id="form-payment">
+                            <form @submit.prevent="submit">
                                 
                                 <div class="w-90 p-5 border border-gray-200">
                                     <p class="font-serif font-bold text-2xl p-2">Datos personales</p>
                                     <hr />
                                     <div class="flex space-4 font-extralight p-2">
                                         <div class="flex-1 text-left">
-                                            <input id="name" type="text" placeholder="Nombre" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                            <input id="name" v-model="form.name" type="text" placeholder="Nombre" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                                         </div>
                                     </div>
                                     <hr />
                                     <div class="flex space-4 font-extralight p-2">
                                         <div class="flex-1 text-left">
-                                            <input id="phone" type="text" placeholder="Número telefonico" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                            <input id="phone" v-model="form.phone" type="text" placeholder="Número telefonico" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                                         </div>
                                     </div>
                                     <hr />
                                     <div class="flex space-4 font-extralight p-2">
                                         <div class="flex-1 text-left">
-                                            <input id="email" type="email" placeholder="Correo electrónico" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                            <input id="email" v-model="form.email" type="email" placeholder="Correo electrónico" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                                         </div>
                                     </div>
                                 </div>
@@ -115,7 +115,7 @@
                                         <div class="flex-1 text-right">${{ formatPrice(total) }}</div>
                                     </div>
                                     <div class="mt-4 text-right">
-                                        <button class="bg-primary text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button" onClick='sendForm()'>
+                                        <button class="bg-primary text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                                             Comprar
                                         </button>
                                     </div>
@@ -147,7 +147,13 @@ export default {
     data() {
         return {
             quantity: null,
-            total: null
+            total: null,
+            form: this.$inertia.form({
+                quantity: '',
+                name: '',
+                phone: '',
+                email: ''
+            })
         }
     },
     created() {
@@ -155,9 +161,16 @@ export default {
         this.total = this.quantity * 2000
     },
     methods: {
+
         formatPrice(value) {
             let val = (value/1).toFixed(2).replace('.', ',')
             return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        },
+
+        submit() {
+            this.form.post(this.route('sale.payment'), {
+                onFinish: (response) => console.log(response),
+            })
         }
     }
 }
