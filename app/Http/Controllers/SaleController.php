@@ -13,10 +13,17 @@ use App\Models\Order;
 class SaleController extends Controller
 {
     private $modelCustomer;
+    protected $placetopay;
 
     public function __construct(Customer $modelCustomer)
     {
         $this->modelCustomer = $modelCustomer;
+
+        $this->placetopay = new PlacetoPay([
+            'login' => env('PLACETOPAY_LOGIN'),
+            'tranKey' => env('PLACETOPAY_TRANKEY'),
+            'url' => env('PLACETOPAY_URL'),
+        ]);
     }
 
     public function detail(Request $request)
@@ -29,16 +36,7 @@ class SaleController extends Controller
 
     public function payment(Request $request)
     {
-        //crear variables de entorno
-        $placetopay = new PlacetoPay([
-            'login' => '6dd490faf9cb87a9862245da41170ff2',
-            'tranKey' => '024h1IlD',
-            'url' => 'https://dev.placetopay.com/redirection',
-            'rest' => [
-                'timeout' => 45,
-                'connect_timeout' => 30,
-            ]
-        ]);
+        
         
         $codeSale = 'YS-'. time();
 
@@ -50,10 +48,10 @@ class SaleController extends Controller
             ],
             'payment' => [
                 'reference' => $codeSale,
-                'description' => 'Testing payment',
+                'description' => 'iPhone 12 Pro',
                 'amount' => [
                     'currency' => 'USD',
-                    'total' => 120,
+                    'total' => env('PRICE_PRODUCT') * $request->quantity,
                 ],
             ],
             'expiration' => date('c', strtotime('+2 days')),
@@ -62,39 +60,33 @@ class SaleController extends Controller
             'userAgent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36',
         ];
 
-            $response = $placetopay->request($dataToPLaceTopay);
-            
-            if ($response->isSuccessful()) {
+        $response = $this->placetopay->request($dataToPLaceTopay);
+        
+        if ($response->isSuccessful()) {
 
-                $data = $this->modelCustomer->create($request, $response->requestId, $codeSale);
-                
-                return Inertia::render('Detail', [
-                    'url' => $response->processUrl,
-                    'auth' => Auth::user()
-                ]);
-            } else {
-                dd($response);
-            }
+            $data = $this->modelCustomer->create($request, $response->requestId, $codeSale);
+            
+            return Inertia::render('Detail', [
+                'url' => $response->processUrl,
+                'auth' => Auth::user()
+            ]);
+        } else {
+            dd($response);
+        }
         
     }
 
     public function response($reference)
     {
-        //crear variables de entorno
-        $placetopay = new PlacetoPay([
-            'login' => '6dd490faf9cb87a9862245da41170ff2',
-            'tranKey' => '024h1IlD',
-            'url' => 'https://dev.placetopay.com/redirection'
-        ]);
-
         $sale = $this->modelCustomer->findBySaleCode($reference);
 
-        $response = $placetopay->query($sale->payment_id);
+        $response = $this->placetopay->query($sale->payment_id);
 
         if ($response->isSuccessful() ) {
             if ($response->status()->isApproved()) {
                 $this->modelCustomer->changeStatusSale($response->status()->status(), $sale->id);
-                return response()->json($response->status()->message());
+                //response()->json($response->status()->message());
+                return redirect()->to('/');
             }
             $this->modelCustomer->changeStatusSale($response->status()->status(), $sale->id);
             return redirect()->to('/');
