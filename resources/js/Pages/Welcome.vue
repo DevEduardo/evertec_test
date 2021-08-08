@@ -81,7 +81,7 @@
                                 <div class="mb-4">
                                     <input id="quantity" v-model="form.quantity" type="number" placeholder="Cantidad" min="1" class="shadow appearance-none border rounded w-48 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                                 </div>
-                                <button type="submit" class="bg-primary text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                                <button  class="bg-primary text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                                     Añadir al carrito
                                 </button>
                             </form>
@@ -95,9 +95,7 @@
 </template>
 
 <script>
-import { reactive } from 'vue';
 import { Head, Link, usePage } from '@inertiajs/inertia-vue3';
-import { Inertia } from '@inertiajs/inertia';
 
 export default {
     components: {
@@ -110,17 +108,20 @@ export default {
         laravelVersion: String,
         phpVersion: String,
     },
-    setup () {
-        const form = reactive({
-            quantity: null,
-            _token: usePage().props.value.csrf_token
-        })
-
-        function submit() {
-            Inertia.post('/sale/detail', form)
+    data() {
+        return {
+            form: this.$inertia.form({
+                quantity: '',
+            })
         }
+    },
 
-        return { form, submit }
+    methods: {
+        submit() {
+            this.form.post(this.route('sale.detail'), {
+                onFinish: () => this.form.reset('quantity'),
+            })
+        }
     }
 }
 </script>
