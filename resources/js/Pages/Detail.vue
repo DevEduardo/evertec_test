@@ -142,7 +142,8 @@ export default {
     props: {
         canRegister: Boolean,
         auth: Boolean,
-        quantityProps: Number
+        quantityProps: Number,
+        url: String
     },
     data() {
         return {
@@ -169,7 +170,9 @@ export default {
 
         submit() {
             this.form.post(this.route('sale.payment'), {
-                onFinish: (response) => console.log(response),
+                onFinish: (response) => {
+                   window.location = this.url
+                },
             })
         }
     }

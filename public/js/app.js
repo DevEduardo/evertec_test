@@ -18693,7 +18693,8 @@ __webpack_require__.r(__webpack_exports__);
   props: {
     canRegister: Boolean,
     auth: Boolean,
-    quantityProps: Number
+    quantityProps: Number,
+    url: String
   },
   data: function data() {
     return {
@@ -18717,9 +18718,11 @@ __webpack_require__.r(__webpack_exports__);
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     },
     submit: function submit() {
+      var _this = this;
+
       this.form.post(this.route('sale.payment'), {
         onFinish: function onFinish(response) {
-          return console.log(response);
+          window.location = _this.url;
         }
       });
     }
