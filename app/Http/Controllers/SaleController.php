@@ -84,21 +84,22 @@ class SaleController extends Controller
         $placetopay = new PlacetoPay([
             'login' => '6dd490faf9cb87a9862245da41170ff2',
             'tranKey' => '024h1IlD',
-            'url' => 'https://dev.placetopay.com/redirection',
-            'rest' => [
-                'timeout' => 45, // (optional) 15 by default
-                'connect_timeout' => 30, // (optional) 5 by default
-            ]
+            'url' => 'https://dev.placetopay.com/redirection'
         ]);
 
-        $response = $placetopay->query();
+        $sale = $this->modelCustomer->findBySaleCode($reference);
 
-        if ($response->isSuccessful()) {
+        $response = $placetopay->query($sale->payment_id);
+
+        if ($response->isSuccessful() ) {
             if ($response->status()->isApproved()) {
-                return response()->json($response);
+                $this->modelCustomer->changeStatusSale($response->status()->status(), $sale->id);
+                return response()->json($response->status()->message());
             }
+            $this->modelCustomer->changeStatusSale($response->status()->status(), $sale->id);
+            return redirect()->to('/');
         } else {
-            print_r($response->status()->message() . "\n");
+            return redirect()->to('/');
         }
     }
 }

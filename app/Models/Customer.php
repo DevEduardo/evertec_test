@@ -39,6 +39,29 @@ class Customer extends Model
             \DB::rollback();
             return $e;
         }
-        
     }
+
+    public function findBySaleCode($code)
+    {
+        return $sale = Customer::where('sale_code', $code)->first();
+    }
+
+    public function changeStatusSale($status, $id)
+    {
+        if("APPROVED" == $status){
+            Customer::find($id)->update(['status' => 'PAYED']);
+        }
+
+        if("PENDING" == $status){
+            Customer::find($id)->update(['status' => 'REJECTED']);
+        }
+
+        if("REJECTED" == $status){
+            Customer::find($id)->update(['status' => 'REJECTED']);
+        }
+
+        if("FAILED" == $status){
+            Customer::find($id)->update(['status' => 'REJECTED']);
+        }
+    } 
 }
