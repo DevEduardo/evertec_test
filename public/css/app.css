@@ -188559,3 +188559,14 @@ select {
   }
 }
 
+.content-logo {
+  width: 20% !important;
+}
+
+.border-primary{
+  border-color: #1ebfa0;
+}
+
+.bg-primary {
+background-color: #1ebfa0;
+}
