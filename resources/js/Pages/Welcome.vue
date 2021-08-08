@@ -162,6 +162,18 @@ export default {
         color: rgba(26, 32, 44, var(--tw-text-opacity));
     }
 
+    .content-logo {
+        width: 20% !important;
+    }
+
+    .border-primary{
+        border-color: #1ebfa0;
+    }
+
+    .bg-primary {
+    background-color: #1ebfa0;
+    }
+
     @media (prefers-color-scheme: dark) {
         .dark\:bg-gray-800 {
             background-color: #2d3748;
