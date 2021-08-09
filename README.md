@@ -38,6 +38,7 @@ sail up
 Una ves culmida el preceso de creacion de los servicos procederemos a ejecutar las migraciones con el siguiente comando
 ```
 sail artisan migrate
+sail artisan db:seed
 ```
 ### Instalacion de los componentes del frontend
 Para instalar los modulos necesarios para front ejecutaremos los siguientes comandos
