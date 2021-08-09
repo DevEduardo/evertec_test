@@ -49,31 +49,13 @@ class SaleController extends Controller
     {
         $codeSale = 'YS-'. time();
 
-        $dataToPLaceTopay = [
-            'buyer' => [
-                "name" => $request->customer_name,
-                "email" => $request->customer_email,
-                "mobile" => $request->customer_mobile
-            ],
-            'payment' => [
-                'reference' => $codeSale,
-                'description' => 'iPhone 12 Pro',
-                'amount' => [
-                    'currency' => 'USD',
-                    'total' => env('PRICE_PRODUCT') * $request->quantity,
-                ],
-            ],
-            'expiration' => date('c', strtotime('+2 days')),
-            'returnUrl' => 'http://127.0.0.1/response/' . $codeSale,
-            'ipAddress' => '127.0.0.1',
-            'userAgent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36',
-        ];
+        $dataToPLaceTopay = $this->dataPlaceToPay($request, $codeSale);
 
         $response = $this->placetopay->request($dataToPLaceTopay);
         
         if ($response->isSuccessful()) {
 
-            $data = $this->modelCustomer->create($request, $response->requestId, $codeSale);
+            $this->modelCustomer->create($request, $response->requestId, $codeSale);
 
             $this->userRegister($request);
             return Inertia::render('Detail', [
@@ -83,7 +65,28 @@ class SaleController extends Controller
         } else {
             dd($response);
         }
+    }
+
+    public function retryPayment(Request $request)
+    {
+        $data = $this->modelCustomer->find($request->id);
         
+        $codeSale = $data->sale_code;
+                
+        $dataToPLaceTopay = $this->dataPlaceToPay($data, $codeSale);
+
+        $response = $this->placetopay->request($dataToPLaceTopay);
+        
+        if ($response->isSuccessful()) {
+
+            $this->modelCustomer->updateOrder($data, $response->requestId);
+            
+            return response()->json([
+                'url' => $response->processUrl
+            ]);
+        } else {
+            dd($response);
+        }
     }
 
     public function response($reference)
@@ -91,17 +94,18 @@ class SaleController extends Controller
         $sale = $this->modelCustomer->findBySaleCode($reference);
 
         $response = $this->placetopay->query($sale->payment_id);
-
+        
         if ($response->isSuccessful() ) {
             if ($response->status()->isApproved()) {
+
                 $this->modelCustomer->changeStatusSale($response->status()->status(), $sale->id);
                 
                 return redirect()->to('/dashboard');
             }
             $this->modelCustomer->changeStatusSale($response->status()->status(), $sale->id);
-            return redirect()->to('/');
+            return redirect()->to('/dashboard');
         } else {
-            return redirect()->to('/');
+            return redirect()->to('/dashboard');
         }
     }
 
@@ -123,5 +127,28 @@ class SaleController extends Controller
             Mail::to($user)->send(new NotificationRegister(['email' => $user->email, 'pass' => $pass]));
         }
        
+    }
+
+    private function dataPlaceToPay($request, $codeSale)
+    {
+        return [
+            'buyer' => [
+                "name" => $request->customer_name,
+                "email" => $request->customer_email,
+                "mobile" => $request->customer_mobile
+            ],
+            'payment' => [
+                'reference' => $codeSale,
+                'description' => 'iPhone 12 Pro',
+                'amount' => [
+                    'currency' => 'USD',
+                    'total' => 2000 * $request->quantity,
+                ],
+            ],
+            'expiration' => date('c', strtotime('+2 days')),
+            'returnUrl' => 'http://127.0.0.1/response/' . $codeSale,
+            'ipAddress' => '127.0.0.1',
+            'userAgent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36',
+        ];
     }
 }

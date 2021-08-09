@@ -77,10 +77,11 @@
                             
                         <p class="font-serif text-5xl italic mt-5">$2000</p>
                         <div>
-                            <form  @submit.prevent="submit" class="mt-8">
+                            <form  @submit.prevent="checkForm(this)" class="mt-8">
                                 <div class="mb-4">
                                     <input id="quantity" v-model="form.quantity" type="number" placeholder="Cantidad" min="1" class="shadow appearance-none border rounded w-48 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                                 </div>
+                                <p v-if="errors" class="bg-red-400 text-white font-bold p-2 mb-3">Deve ingresar una cantidad!</p>
                                 <button  class="bg-primary text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                                     Añadir al carrito
                                 </button>
@@ -112,7 +113,8 @@ export default {
         return {
             form: this.$inertia.form({
                 quantity: '',
-            })
+            }),
+            errors: null
         }
     },
 
@@ -121,6 +123,22 @@ export default {
             this.form.post(this.route('sale.detail'), {
                 onFinish: () => this.form.reset('quantity'),
             })
+        },
+        checkForm(e) {
+            if (this.form.quantity) {
+                this.errors = null;
+                this.submit();
+                return true;
+            }
+
+            this.errors = null;
+
+            if (!this.form.quantity) {
+                this.errors = true;
+            }
+
+            
+            e.preventDefault();
         }
     }
 }

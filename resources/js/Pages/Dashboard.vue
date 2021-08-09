@@ -119,7 +119,12 @@
                                     <td class="p-2 border-r">{{order.sale_code}}</td>
                                     <td class="p-2 border-r bg-orange text-white-400">{{status(order.status)}}</td>
                                     <td>
-                                        <a href="#" class="bg-primary p-2 text-white hover:shadow-lg text-xs font-thin" v-if="ifRetryPayment(order.status)">Reintentar pago</a>
+                                        <a 
+                                            href="#" 
+                                            class="bg-primary p-2 text-white hover:shadow-lg text-xs font-thin" 
+                                            v-if="ifRetryPayment(order.status)"
+                                            v-on:click="retryPayment(order.id)"
+                                        >Reintentar pago</a>
                                     </td>
                                 </tr>
                                 
@@ -187,6 +192,12 @@ export default {
                 return true
             }
             return false
+        },
+        retryPayment(id) {
+            axios.post(this.route('sale.retryPayment'), {
+                    id: id
+                })
+                .then(response => window.location = response.data.url)
         }
     }
 }

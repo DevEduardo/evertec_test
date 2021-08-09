@@ -74,16 +74,24 @@
                                 </div>
                                 <div class="flex-1">
                                     <div class="mb-4 p-6">
-                                        <input id="quantity" type="number" v-model="quantityProps" placeholder="Cantidad" min="1" class="shadow appearance-none border rounded w-48 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                        <input 
+                                        id="quantity" 
+                                            type="number" 
+                                            v-model="quantity" 
+                                            placeholder="Cantidad" 
+                                            min="1" 
+                                            class="shadow appearance-none border rounded w-48 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                            @input="changeQuantity()"
+                                        >
                                     </div>
                                 </div>
-                                <div class="flex-1 p-8"><p class="font-serif font-bold font-base">$2.000</p></div>
+                                <div class="flex-1 p-8"><p class="font-serif font-bold font-base">${{formatPrice(2000)}}</p></div>
                                 <div class="flex-1 p-8"><p class="font-serif font-bold font-base">${{ formatPrice(total) }}</p></div>
                             </div>
                         </div>
                         
                         <div class="w-96 p-5">
-                            <form @submit.prevent="submit">
+                            <form @submit.prevent="checkForm(this)">
                                 
                                 <div class="w-90 p-5 border border-gray-200">
                                     <p class="font-serif font-bold text-2xl p-2">Datos personales</p>
@@ -105,13 +113,14 @@
                                             <input id="email" v-model="form.customer_email" type="email" placeholder="Correo electrónico" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                                         </div>
                                     </div>
+                                    <p v-if="errors" class="bg-red-400 text-white font-bold p-2 mb-3">{{ errors }}</p>
                                 </div>
 
                                 <div class="w-90 mt-4 p-5 border border-gray-200">
                                     <p class="font-serif font-bold text-2xl p-2">Resumen de pedido</p>
                                     <hr />
                                     <div class="flex space-4 font-extralight p-2">
-                                        <div class="flex-1 text-left">Subtotal ({{ quantityProps }})</div>
+                                        <div class="flex-1 text-left">Subtotal ({{ quantity }})</div>
                                         <div class="flex-1 text-right">${{ formatPrice(total) }}</div>
                                     </div>
                                     <div class="mt-4 text-right">
@@ -147,13 +156,15 @@ export default {
     },
     data() {
         return {
+            errors: null,
             quantity: null,
             total: null,
             form: this.$inertia.form({
-                quantity: '',
-                customer_name: '',
-                customer_mobile: '',
-                customer_email: ''
+                quantity: null,
+                customer_name: null,
+                customer_mobile: null,
+                customer_email: null,
+                firstPayment: true
             })
         }
     },
@@ -168,11 +179,44 @@ export default {
             let val = (value/1).toFixed(2).replace('.', ',')
             return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
         },
-
+        changeQuantity() {
+            console.log(this.quantity)
+            this.form.quantity = this.quantity
+            this.total = this.quantity * 2000
+        },
         submit() {
             this.form.post(this.route('sale.payment'), {
                 onFinish: () => window.location = this.url,
             })
+        },
+        checkForm(e) {
+            if (this.form.quantity && this.form.customer_name && this.form.customer_mobile && this.form.customer_email) {
+                this.errors = null;
+                this.submit();
+                return true;
+            }
+
+            if (!this.form.quantity) {
+                this.errors = 'La cantidad es obligatorio.';
+            }
+
+            if (!this.form.customer_name) {
+                this.errors = 'El nombre es obligatorio.';
+            }
+
+            if (!this.form.customer_mobile) {
+                this.errors = 'El numero de telefono es obligatorio.';
+            }
+
+            if (!this.form.customer_email) {
+                this.errors = 'El correo electronico es obligatorio.';
+            }
+
+            if (!this.form.quantity && !this.form.customer_name && !this.form.customer_mobile && !this.form.customer_email) {
+                this.errors = 'Debe llenar todos los campos';
+            }
+
+            e.preventDefault();
         }
     }
 }
