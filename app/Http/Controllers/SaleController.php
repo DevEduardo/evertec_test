@@ -7,8 +7,6 @@ use Dnetix\Redirection\PlacetoPay;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Customer;
-use App\Models\Payment;
-use App\Models\Order;
 
 class SaleController extends Controller
 {
@@ -24,6 +22,12 @@ class SaleController extends Controller
             'tranKey' => env('PLACETOPAY_TRANKEY'),
             'url' => env('PLACETOPAY_URL'),
         ]);
+    }
+
+    public function orders()
+    {
+        $orders = $this->modelCustomer->filterEmail(Auth::user()->email);
+        return response()->json(['orders' => $orders]);
     }
 
     public function detail(Request $request)

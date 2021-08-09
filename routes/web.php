@@ -33,4 +33,5 @@ Route::any('sale/detail', [SaleController::class, 'detail'])->name('sale.detail'
 Route::post('sale/payment', [SaleController::class, 'payment'])->name('sale.payment');
 Route::get('/response/{reference}', [SaleController::class, 'response']);
 
+Route::get('orders', [SaleController::class, 'orders'])->name('orders');
 require __DIR__.'/auth.php';

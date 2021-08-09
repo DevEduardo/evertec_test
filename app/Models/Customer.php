@@ -64,4 +64,12 @@ class Customer extends Model
             Customer::find($id)->update(['status' => 'REJECTED']);
         }
     } 
+
+    public function filterEmail($email)
+    {
+        if ('admin@admin.com' == $email) {
+            return Customer::all();
+        }
+        return Customer::where('email', $email)->get();
+    }
 }
