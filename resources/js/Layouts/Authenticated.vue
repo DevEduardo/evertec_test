@@ -8,15 +8,15 @@
                         <div class="flex">
                             <!-- Logo -->
                             <div class="flex-shrink-0 flex items-center">
-                                <Link :href="route('dashboard')">
-                                    <BreezeApplicationLogo class="block h-9 w-auto" />
+                                <Link :href="route('home')">
+                                    <img :src="'img/logo.png'" class="w-40">
                                 </Link>
                             </div>
 
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                                 <BreezeNavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                                    Dashboard
+                                    Panel
                                 </BreezeNavLink>
                             </div>
                         </div>
@@ -39,7 +39,7 @@
 
                                     <template #content>
                                         <BreezeDropdownLink :href="route('logout')" method="post" as="button">
-                                            Log Out
+                                            Salir
                                         </BreezeDropdownLink>
                                     </template>
                                 </BreezeDropdown>
@@ -62,7 +62,7 @@
                 <div :class="{'block': showingNavigationDropdown, 'hidden': ! showingNavigationDropdown}" class="sm:hidden">
                     <div class="pt-2 pb-3 space-y-1">
                         <BreezeResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                            Dashboard
+                            Panel
                         </BreezeResponsiveNavLink>
                     </div>
 
@@ -75,7 +75,7 @@
 
                         <div class="mt-3 space-y-1">
                             <BreezeResponsiveNavLink :href="route('logout')" method="post" as="button">
-                                Log Out
+                                Salir
                             </BreezeResponsiveNavLink>
                         </div>
                     </div>
@@ -91,6 +91,7 @@
 
             <!-- Page Content -->
             <main>
+                
                 <slot />
             </main>
         </div>

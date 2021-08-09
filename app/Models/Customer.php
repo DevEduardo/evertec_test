@@ -41,6 +41,25 @@ class Customer extends Model
         }
     }
 
+    public function updateOrder($sale, $payment_id)
+    {
+        try {
+            \DB::beginTransaction();
+            $customer = Customer::find($sale->id);
+            $customer->sale_code = $code;
+            $customer->payment_id = $payment_id;
+            $customer->quantity = $sale->quantity;
+            $customer->amount = 2000 * $sale->quantity;
+            $customer->save();
+            \DB::commit();
+            return $customer;
+
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return $e;
+        }
+    }
+
     public function findBySaleCode($code)
     {
         return $sale = Customer::where('sale_code', $code)->first();
@@ -64,4 +83,12 @@ class Customer extends Model
             Customer::find($id)->update(['status' => 'REJECTED']);
         }
     } 
+
+    public function filterEmail($email)
+    {
+        if ('admin@admin.com' == $email) {
+            return Customer::all();
+        }
+        return Customer::where('customer_email', $email)->get();
+    }
 }
