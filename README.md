@@ -48,3 +48,6 @@ Una vez culmida el proceso realizamos la compilacion del lo modulos
 ```
 sail npm run dev
 ```
+
+### Al momento de generar una venta el sistema le envia un correo al cliente con los datos de acceso al sistema
+
