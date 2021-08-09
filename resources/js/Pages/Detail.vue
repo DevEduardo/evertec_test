@@ -224,7 +224,7 @@ export default {
     }
 
     .bg-primary {
-    background-color: #1ebfa0;
+        background-color: #1ebfa0;
     }
 
     @media (prefers-color-scheme: dark) {

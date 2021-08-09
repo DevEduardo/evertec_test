@@ -2,9 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Dnetix\Redirection\PlacetoPay;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use App\Mail\NotificationRegister;
+
+use App\Models\User;
 use Inertia\Inertia;
 use App\Models\Customer;
 
@@ -27,7 +34,7 @@ class SaleController extends Controller
     public function orders()
     {
         $orders = $this->modelCustomer->filterEmail(Auth::user()->email);
-        return response()->json(['orders' => $orders]);
+        return response()->json(['orders' => $orders, 'email' => Auth::user()->email]);
     }
 
     public function detail(Request $request)
@@ -40,8 +47,6 @@ class SaleController extends Controller
 
     public function payment(Request $request)
     {
-        
-        
         $codeSale = 'YS-'. time();
 
         $dataToPLaceTopay = [
@@ -69,7 +74,8 @@ class SaleController extends Controller
         if ($response->isSuccessful()) {
 
             $data = $this->modelCustomer->create($request, $response->requestId, $codeSale);
-            
+
+            $this->userRegister($request);
             return Inertia::render('Detail', [
                 'url' => $response->processUrl,
                 'auth' => Auth::user()
@@ -89,13 +95,33 @@ class SaleController extends Controller
         if ($response->isSuccessful() ) {
             if ($response->status()->isApproved()) {
                 $this->modelCustomer->changeStatusSale($response->status()->status(), $sale->id);
-                //response()->json($response->status()->message());
-                return redirect()->to('/');
+                
+                return redirect()->to('/dashboard');
             }
             $this->modelCustomer->changeStatusSale($response->status()->status(), $sale->id);
             return redirect()->to('/');
         } else {
             return redirect()->to('/');
         }
+    }
+
+    private function userRegister($data)
+    {
+        $pass = Str::random(10);
+
+        if (!User::where('email', $data->customer_email)->first()) {
+            $user = User::create([
+                'name' => $data->customer_name,
+                'email' => $data->customer_email,
+                'password' => Hash::make($pass),
+            ]);
+    
+            event(new Registered($user));
+    
+            Auth::login($user);
+    
+            Mail::to($user)->send(new NotificationRegister(['email' => $user->email, 'pass' => $pass]));
+        }
+       
     }
 }

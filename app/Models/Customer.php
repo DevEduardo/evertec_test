@@ -70,6 +70,6 @@ class Customer extends Model
         if ('admin@admin.com' == $email) {
             return Customer::all();
         }
-        return Customer::where('email', $email)->get();
+        return Customer::where('customer_email', $email)->get();
     }
 }
